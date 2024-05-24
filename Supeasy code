@@ -1,0 +1,21 @@
+let result = { discountApplicationStrategy: "ALL", discounts: [] };
+
+let totalQuantity = input.cart.lines.reduce((sum, line) => sum + line.quantity, 0);
+let hasTag = input.cart.buyerIdentity?.customer && input.cart.buyerIdentity?.customer.hasTags.some(tag => tag.tag === "100+ Bottle Price List" && tag.hasTag);
+
+if (totalQuantity > 24 && totalQuantity < 100 && hasTag) {
+  input.cart.lines.forEach(line => {   
+    if(line.merchandise.product.metafield && line.attribute){
+        let discountValue = line.attribute.value;
+        let discount = {
+            message: "Wholesale 24 ~ 99",
+            targets: [{ productVariant: { id: line.merchandise.id } }],
+            value: { fixedAmount: { amount: parseFloat(discountValue), appliesToEachItem: true } }
+        };
+        result.discounts.push(discount);    
+    } 
+      
+  });
+}
+
+return result;
