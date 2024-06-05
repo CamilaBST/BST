@@ -1,0 +1,43 @@
+let result = {
+  discountApplicationStrategy: "MAXIMUM",
+  discounts: []
+};
+
+const subtotalAmount = input.cart.cost.subtotalAmount.amount;
+const discountPercentage = 20;
+const maxDiscountValue = 50;
+const discountValue = subtotalAmount * (discountPercentage / 100);
+
+if (discountValue > maxDiscountValue) {
+  result.discounts.push({
+    conditions: [],
+    message: "20% discount applied up to a maximum of $50",
+    targets: input.cart.lines.map(line => ({
+      productVariant: {
+        id: line.merchandise.id
+      }
+    })),
+    value: {
+      fixedAmount: {
+        amount: maxDiscountValue
+      }
+    }
+  });
+} else {
+  result.discounts.push({
+    conditions: [],
+    message: "20% discount applied",
+    targets: input.cart.lines.map(line => ({
+      productVariant: {
+        id: line.merchandise.id
+      }
+    })),
+    value: {
+      percentage: {
+        value: discountPercentage
+      }
+    }
+  });
+}
+
+return result;
